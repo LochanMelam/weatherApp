@@ -3,7 +3,6 @@ var bodyParser = require("body-parser");
 // New app using express module
 var app = express();
 var request = require("request");
-const { json } = require("body-parser");
 
 // setting template engine pug
 app.set("view engine", "pug");
@@ -22,13 +21,21 @@ app.post("/", function (req, res) {
   request(url, (error, response, body) => {
     // Printing the error if occurred
     if (error) console.log(error);
-    var temp = JSON.parse(body).main.temp - 273;
-    res.send(
-      `The Temperature in ${city.toUpperCase()} is ${temp} in degrees celsius`
-    );
+    var temp = JSON.parse(body);
+    console.log(temp);
+    if (temp.cod == 200) {
+      res.send(
+        `The Temperature in ${city.toUpperCase()} is ${
+          temp.main.temp - 273
+        } in degrees celsius`
+      );
+    } else {
+      res.send("No such city");
+    }
   });
 });
 
 app.listen(process.env.PORT || 3000, function () {
   console.log("server is running on port 3000");
 });
+
